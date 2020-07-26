@@ -5,18 +5,20 @@ import VueDevtools from 'nativescript-vue-devtools'
 // import routes from "./routes";
 
 import VueApollo from "vue-apollo";
-import ApolloClient from "apollo-boost";
+import { ApolloClient } from 'apollo-client'
+import { PrismicLink } from "apollo-link-prismic";
+import { InMemoryCache } from "apollo-cache-inmemory";
 
 export const defaultClient = new ApolloClient({
-  uri: 'http://brightworld.prismic.io/graphql',
-  // headers: {
-  //     authorization: `Bearer ${tokenInAppSet}`,
-  // }
-});
+  link: new PrismicLink({  uri: 'http://brightworld.prismic.io/graphql'}),
+  cache: new InMemoryCache()
+})
 Vue.use(VueApollo);
+
 const apolloProvider = new VueApollo({
     defaultClient,
 });
+
 
 if(TNS_ENV !== 'production') {
   Vue.use(VueDevtools)
@@ -28,6 +30,7 @@ Vue.config.silent = (TNS_ENV === 'production')
 
 
 new Vue({
+  el: '#app',
   store,
   apolloProvider,
   render: h => h('frame', [h(App)])
